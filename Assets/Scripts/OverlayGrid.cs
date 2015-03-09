@@ -9,8 +9,11 @@ public class OverlayGrid : MonoBehaviour {
 
     public GameObject tilePrefab;
 
+    private GameObject[,] grid;
+
     void Awake()
     {
+        grid = new GameObject[gridWidth, gridHeight];
         this.drawGrid();
     }
 
@@ -23,10 +26,14 @@ public class OverlayGrid : MonoBehaviour {
                 GameObject tile = Instantiate(tilePrefab,
                     //assuming each tile has a size of 1x1
                     new Vector3(-((gridWidth + ((gridWidth - 1) * distanceBetweenTiles)) / 2f) + i * (distanceBetweenTiles + 1),
-                    0.01f,
-                    -((gridHeight + ((gridHeight - 1) * distanceBetweenTiles)) / 2f) + j * (distanceBetweenTiles + 1)),
+                                0.01f,
+                                -((gridHeight + ((gridHeight - 1) * distanceBetweenTiles)) / 2f) + j * (distanceBetweenTiles + 1)),
                     tilePrefab.transform.rotation) as GameObject;
                 tile.transform.parent = transform;
+                Tile tileComponent = tile.GetComponent<Tile>();
+                tileComponent.i = i;
+                tileComponent.j = j;
+                grid[i, j] = tile;
             }
         }
     }
