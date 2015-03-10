@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class Tile : MonoBehaviour {
@@ -7,6 +8,13 @@ public class Tile : MonoBehaviour {
 
     public override string ToString()
     {
-        return "Tile at position: i, j";
+        return "Tile at position: " + i + ", " + j;
+    }
+
+    public void onClick(BaseEventData data)
+    {
+        PointerEventData pointerData = data as PointerEventData;
+
+        Debug.Log(pointerData.worldPosition);
     }
 }
