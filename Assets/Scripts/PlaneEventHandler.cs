@@ -11,6 +11,9 @@ public class PlaneEventHandler : MonoBehaviour {
     private GameObject twoByTwoTile;
 
     private Vector3 lastMousePosition;
+    private Vector3 lastMouseOnWorldPosition;
+
+    public GameObject OneByOneBuilding;
 
     void Awake()
     {
@@ -24,14 +27,41 @@ public class PlaneEventHandler : MonoBehaviour {
         if (isSelecting)
         {
             if (EventSystem.current.IsPointerOverGameObject())
+            {
                 OnMouseMove();
+            }
         }
     }
 
-    public void OnClick(BaseEventData data)
+    public void OnMouseClick(BaseEventData data)
     {
-        isSelecting = !isSelecting;
-        oneByOneTile.SetActive(isSelecting);
+        PointerEventData pointerData = data as PointerEventData;
+        if (pointerData.pointerId == -1)
+        {
+            isSelecting = !isSelecting;
+            oneByOneTile.SetActive(isSelecting);
+        }
+        else if (pointerData.pointerId == -2)
+        {
+            if (isSelecting)
+            {
+                Vector3 buildingPos = worldToGridPosition(lastMouseOnWorldPosition);
+                Instantiate(OneByOneBuilding, buildingPos, Quaternion.identity);
+                Debug.Log("New 1x1 building at: " + printVector(buildingPos));
+            }
+        }
+    }
+
+    Vector3 worldToGridPosition(Vector3 worldPosition)
+    {
+        Vector3 gridPos = worldPosition;
+        gridPos.y = 0.001f;
+        int tileI = Mathf.FloorToInt(gridPos.z);
+        int tileJ = Mathf.FloorToInt(gridPos.x);
+        gridPos.z = tileI + 0.5f;
+        gridPos.x = tileJ + 0.5f;
+
+        return gridPos;
     }
 
     void OnMouseMove()
@@ -43,14 +73,15 @@ public class PlaneEventHandler : MonoBehaviour {
             cursor.position = lastMousePosition = currentMousePosition;
             List<RaycastResult> objectsHit = new List<RaycastResult>();
             EventSystem.current.RaycastAll(cursor, objectsHit);
-            Vector3 tilePos = cursor.worldPosition;
-            tilePos.y = 0.001f;
-            int tileI = Mathf.FloorToInt(tilePos.z);
-            int tileJ = Mathf.FloorToInt(tilePos.x);
-            tilePos.z = tileI + 0.5f;
-            tilePos.x = tileJ + 0.5f;
+            Vector3 tilePos = worldToGridPosition(cursor.worldPosition);
             oneByOneTile.transform.position = tilePos;
-            Debug.Log("Selection tile on i: " + tileI + " j: " + tileJ);
+            lastMouseOnWorldPosition = cursor.worldPosition;
+            Debug.Log("Selection tile on i: " + (tilePos.z - 0.5f) + " j: " + (tilePos.x - 0.5f));
         }
+    }
+
+    string printVector(Vector3 v)
+    {
+        return "i: " + v.z + ", j: " + v.x;
     }
 }
