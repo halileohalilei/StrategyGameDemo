@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections;
 
-public class Tile : MonoBehaviour {
+namespace Assets.Scripts
+{
+    public class Tile : MonoBehaviour {
 
-    public int i, j;
+        public int I, J;
 
-    public override string ToString()
-    {
-        return "Tile at position: " + i + ", " + j;
-    }
+        public int Width, Height;
 
-    public void onClick(BaseEventData data)
-    {
-        PointerEventData pointerData = data as PointerEventData;
+        public override string ToString()
+        {
+            return "Tile at position: " + I + ", " + J;
+        }
 
-        Debug.Log(pointerData.worldPosition);
+        public void OnClick(BaseEventData data)
+        {
+            PointerEventData pointerData = data as PointerEventData;
+
+            if (pointerData != null) Debug.Log(pointerData.worldPosition);
+        }
     }
 }

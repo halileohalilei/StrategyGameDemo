@@ -1,17 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class InputManager : MonoBehaviour {
+namespace Assets.Scripts
+{
+    public class InputManager : MonoBehaviour {
 
-	void Update () {
-	}
+        void Update () {
+        }
 
-    public void OnScreenClick()
-    {
-        Event e = Event.current;
-        if (e.isMouse)
-        { 
-            Debug.Log(e);
+        public void OnScreenClick()
+        {
+            Event e = Event.current;
+            if (e.isMouse)
+            { 
+                Debug.Log(e);
+            }
         }
     }
 }
