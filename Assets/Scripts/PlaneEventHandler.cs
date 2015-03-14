@@ -8,28 +8,34 @@ namespace Assets.Scripts
 {
     public class PlaneEventHandler : MonoBehaviour
     {
-        private GameObject _oneByOneTile;
+        private GameObject _tileQuad;
 //        private GameObject _twoByTwoTile;
 
         private Vector3 _lastMousePosition;
         private Vector3 _lastMouseOnWorldPosition;
 
-        public GameObject OneByOneBuilding;
+//        public GameObject OneByOneBuilding;
         public GameObject Tile;
+
+        private Grid grid;
+
+        public GameObject[] allStructures;
+        private int _selectedStructureIndex;
 
         private const float TOLERANCE = 0.001f;
 
         private void Awake()
         {
-//            _oneByOneTile = GameObject.Find("OneByOneStructureTile");
-            _oneByOneTile = Instantiate(Tile, new Vector3(0, 0, 0), Quaternion.Euler(90f, 0f, 0f)) as GameObject;
-            if (_oneByOneTile != null) _oneByOneTile.SetActive(false);
-//            _twoByTwoTile = GameObject.Find("TwoByTwoStructureTile");
+            _tileQuad = Instantiate(Tile, new Vector3(0, 0, 0), Quaternion.Euler(90f, 0f, 0f)) as GameObject;
+            if (_tileQuad != null) _tileQuad.SetActive(false);
+
+            grid = GetComponent<Grid>();
+            _selectedStructureIndex = 0;
         }
 
         private void Update()
         {
-            if (!GameData.Instance.IsPlacing()) return;
+            if (!GameData.IsPlacing()) return;
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 OnMouseMove();
@@ -42,18 +48,28 @@ namespace Assets.Scripts
             PointerEventData pointerData = data as PointerEventData;
             if (pointerData != null && pointerData.pointerId == -1)
             {
-                GameData.Instance.SwitchState();
-                _oneByOneTile.SetActive(GameData.Instance.IsPlacing());
+                GameData.SwitchState();
+                _tileQuad.SetActive(GameData.IsPlacing());
             }
             else if (pointerData != null && pointerData.pointerId == -2)
             {
-                if (!GameData.Instance.IsPlacing()) return;
-                var buildingPos = Util.WorldToGridPosition(_lastMouseOnWorldPosition);
-                if (GameData.Instance.PositionAvailable(buildingPos))
+                if (!GameData.IsPlacing()) return;
+                Vector3 structurePos = Util.WorldToGridPosition(_lastMouseOnWorldPosition, grid);
+                GameObject selectedStructure = allStructures[_selectedStructureIndex];
+                Structure prefabStructure = selectedStructure.GetComponent<Structure>();
+                if (grid.PositionOnGridAvailable(Convert.ToInt32(structurePos.z), 
+                                                 Convert.ToInt32(structurePos.x), 
+                                                 prefabStructure.ZLength, 
+                                                 prefabStructure.XLength))
                 {
-                    Instantiate(OneByOneBuilding, buildingPos, Quaternion.identity);
-                    Debug.Log("New 1x1 building at: " + Util.GridPositionToString(buildingPos));
-                    GameData.Instance.PutNewStructure(buildingPos, 1, 1, GameData.StructureType.Common);
+                    GameObject newStructure = Instantiate(selectedStructure, structurePos, Quaternion.identity) as GameObject;
+                    if (newStructure != null)
+                    {
+                        newStructure.transform.position = Util.DetermineStructurePosition(grid, structurePos,
+                            prefabStructure);
+                        Debug.Log("New 1x1 building at: " + Util.GridPositionToString(newStructure.transform.position));
+                    }
+//                    GameData.Instance.PutNewStructure(buildingPos, 1, 1, GameData.StructureType.Common);
                 }
             }
         }
@@ -69,10 +85,10 @@ namespace Assets.Scripts
                 };
                 List<RaycastResult> objectsHit = new List<RaycastResult>();
                 EventSystem.current.RaycastAll(cursor, objectsHit);
-                Vector3 tilePos = Util.WorldToGridPosition(cursor.worldPosition);
-                _oneByOneTile.transform.position = tilePos;
+                Vector3 tilePos = Util.WorldToGridPosition(cursor.worldPosition, grid);
+                tilePos += new Vector3(0.5f * grid.TileXSize, 0, 0.5f * grid.TileZSize);
+                _tileQuad.transform.position = tilePos;
                 _lastMouseOnWorldPosition = cursor.worldPosition;
-//                Debug.Log("Selection tile on i: " + (tilePos.z - 0.5f) + " j: " + (tilePos.x - 0.5f));
             }
         }
     }
