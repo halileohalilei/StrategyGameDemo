@@ -19,7 +19,7 @@ namespace Assets.Scripts
 
             gridPos.z = grid.StartingPoint.z + Mathf.Floor((worldPosition.z - grid.StartingPoint.z) / grid.TileZSize);
             gridPos.x = grid.StartingPoint.x + Mathf.Floor((worldPosition.x - grid.StartingPoint.x) / grid.TileXSize);
-            Debug.Log(worldPosition + " (" + grid.TileZSize + ", " + grid.TileXSize + ")");
+//            Debug.Log(worldPosition + " (" + grid.TileZSize + ", " + grid.TileXSize + ")");
             return gridPos;
         }
 

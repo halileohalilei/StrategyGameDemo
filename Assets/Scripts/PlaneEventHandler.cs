@@ -30,7 +30,7 @@ namespace Assets.Scripts
             if (_tileQuad != null) _tileQuad.SetActive(false);
 
             grid = GetComponent<Grid>();
-            _selectedStructureIndex = 0;
+            _selectedStructureIndex = 1;
         }
 
         private void Update()
@@ -68,8 +68,8 @@ namespace Assets.Scripts
                         newStructure.transform.position = Util.DetermineStructurePosition(grid, structurePos,
                             prefabStructure);
                         Debug.Log("New 1x1 building at: " + Util.GridPositionToString(newStructure.transform.position));
+                        grid.AddStructureToGrid(prefabStructure);
                     }
-//                    GameData.Instance.PutNewStructure(buildingPos, 1, 1, GameData.StructureType.Common);
                 }
             }
         }

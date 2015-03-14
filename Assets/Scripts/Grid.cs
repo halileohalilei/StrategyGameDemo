@@ -28,7 +28,7 @@ namespace Assets.Scripts
 
             _tiles = new int[ZLength, XLength];
 
-            Debug.Log("Plane size x:" + _xSize + ", z:" + _zSize);
+//            Debug.Log("Plane size x:" + _xSize + ", z:" + _zSize);
         }
 
         public bool PositionOnGridAvailable(int z, int x, int zLength, int xLength)
