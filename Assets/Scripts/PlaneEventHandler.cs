@@ -9,12 +9,10 @@ namespace Assets.Scripts
     public class PlaneEventHandler : MonoBehaviour
     {
         private GameObject _tileQuad;
-//        private GameObject _twoByTwoTile;
 
         private Vector3 _lastMousePosition;
         private Vector3 _lastMouseOnWorldPosition;
 
-//        public GameObject OneByOneBuilding;
         public GameObject Tile;
 
         private Grid grid;
@@ -24,7 +22,7 @@ namespace Assets.Scripts
 
         private const float TOLERANCE = 0.001f;
 
-        private void Awake()
+        void Awake()
         {
             _tileQuad = Instantiate(Tile, new Vector3(0, 0, 0), Quaternion.Euler(90f, 0f, 0f)) as GameObject;
             if (_tileQuad != null) _tileQuad.SetActive(false);
@@ -33,7 +31,7 @@ namespace Assets.Scripts
             _selectedStructureIndex = 1;
         }
 
-        private void Update()
+        void Update()
         {
             if (!GameData.IsPlacing()) return;
             if (EventSystem.current.IsPointerOverGameObject())
@@ -44,7 +42,6 @@ namespace Assets.Scripts
 
         public void OnMouseClick(BaseEventData data)
         {
-//            Debug.Log("click");
             PointerEventData pointerData = data as PointerEventData;
             if (pointerData != null && pointerData.pointerId == -1)
             {
@@ -67,14 +64,16 @@ namespace Assets.Scripts
                     {
                         newStructure.transform.position = Util.DetermineStructurePosition(grid, structurePos,
                             prefabStructure);
-                        Debug.Log("New 1x1 building at: " + Util.GridPositionToString(newStructure.transform.position));
-                        grid.AddStructureToGrid(prefabStructure);
+                        Structure s = newStructure.GetComponent<Structure>();
+                        s.StartingX = Convert.ToInt32(structurePos.x);
+                        s.StartingZ = Convert.ToInt32(structurePos.z);
+                        grid.AddStructureToGrid(s);
                     }
                 }
             }
         }
 
-        private void OnMouseMove()
+        void OnMouseMove()
         {
             Vector3 currentMousePosition = Input.mousePosition;
             if (Math.Abs(Vector3.Distance(_lastMousePosition, currentMousePosition)) > TOLERANCE)

@@ -17,18 +17,16 @@ namespace Assets.Scripts
         public float TileXSize { get; set; }
         public float TileZSize { get; set; }
 
-        void Awake()
+        private void Awake()
         {
             Mesh mesh = transform.GetComponent<MeshFilter>().mesh;
-            _xSize = mesh.bounds.size.x * transform.localScale.x;
-            _zSize = mesh.bounds.size.z * transform.localScale.z;
+            _xSize = mesh.bounds.size.x*transform.localScale.x;
+            _zSize = mesh.bounds.size.z*transform.localScale.z;
 
-            TileXSize = _xSize / XLength;
-            TileZSize = _zSize / ZLength;
+            TileXSize = _xSize/XLength;
+            TileZSize = _zSize/ZLength;
 
             _tiles = new int[ZLength, XLength];
-
-//            Debug.Log("Plane size x:" + _xSize + ", z:" + _zSize);
         }
 
         public bool PositionOnGridAvailable(int z, int x, int zLength, int xLength)
@@ -55,7 +53,7 @@ namespace Assets.Scripts
                     {
                         return false;
                     }
-                }   
+                }
             }
 
             return available; //_tiles[z, x] == 0;
@@ -67,8 +65,22 @@ namespace Assets.Scripts
             {
                 for (int j = 0; j < s.XLength; j++)
                 {
-                    _tiles[i, j] = s.GetStructureType();
+                    _tiles[s.StartingZ + i, s.StartingX + j] = s.GetStructureType();
                 }
+            }
+            PrintGrid();
+        }
+
+        private void PrintGrid()
+        {
+            for (int i = 0; i < XLength; i++)
+            {
+                string s = "";
+                for (int j = 0; j < ZLength; j++)
+                {
+                    s += _tiles[j, i] + ", ";
+                }
+                Debug.Log(s);
             }
         }
     }
