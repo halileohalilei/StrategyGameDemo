@@ -28,29 +28,39 @@ namespace Assets.Scripts
             if (_tileQuad != null) _tileQuad.SetActive(false);
 
             grid = GetComponent<Grid>();
-            _selectedStructureIndex = 1;
+            _selectedStructureIndex = -1;
         }
 
         void Update()
         {
-            if (!GameData.IsPlacing()) return;
+            if (!IsPlacingStructure()) return;
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 OnMouseMove();
             }
         }
 
+        public void ChangeStructureType(int type)
+        {
+            if (_selectedStructureIndex == type)
+            {
+                _selectedStructureIndex = -1;
+            }
+            else
+            {
+                _selectedStructureIndex = type;
+            }
+            _tileQuad.SetActive(IsPlacingStructure());
+        }
+
         public void OnMouseClick(BaseEventData data)
         {
+            if (!IsPlacingStructure()) return;
+
             PointerEventData pointerData = data as PointerEventData;
             if (pointerData != null && pointerData.pointerId == -1)
             {
-                GameData.SwitchState();
-                _tileQuad.SetActive(GameData.IsPlacing());
-            }
-            else if (pointerData != null && pointerData.pointerId == -2)
-            {
-                if (!GameData.IsPlacing()) return;
+                if (!IsPlacingStructure()) return;
                 Vector3 structurePos = Util.WorldToGridPosition(_lastMouseOnWorldPosition, grid);
                 GameObject selectedStructure = allStructures[_selectedStructureIndex];
                 Structure prefabStructure = selectedStructure.GetComponent<Structure>();
@@ -64,10 +74,12 @@ namespace Assets.Scripts
                     {
                         newStructure.transform.position = Util.DetermineStructurePosition(grid, structurePos,
                             prefabStructure);
+                        newStructure.transform.parent = transform;
                         Structure s = newStructure.GetComponent<Structure>();
                         s.StartingX = Convert.ToInt32(structurePos.x);
                         s.StartingZ = Convert.ToInt32(structurePos.z);
                         grid.AddStructureToGrid(s);
+
                     }
                 }
             }
@@ -90,5 +102,11 @@ namespace Assets.Scripts
                 _lastMouseOnWorldPosition = cursor.worldPosition;
             }
         }
+
+        private bool IsPlacingStructure()
+        {
+            return _selectedStructureIndex != -1;
+        }
+
     }
 }

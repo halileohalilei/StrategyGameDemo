@@ -68,7 +68,7 @@ namespace Assets.Scripts
                     _tiles[s.StartingZ + i, s.StartingX + j] = s.GetStructureType();
                 }
             }
-            PrintGrid();
+//            PrintGrid();
         }
 
         private void PrintGrid()
