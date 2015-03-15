@@ -51,6 +51,7 @@ namespace Assets.Scripts
                 _selectedStructureIndex = type;
             }
             _tileQuad.SetActive(IsPlacingStructure());
+            Debug.Log("structure type: " + _selectedStructureIndex);
         }
 
         public void OnMouseClick(BaseEventData data)

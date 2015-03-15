@@ -58,7 +58,7 @@ namespace Assets.Scripts
             }
 
             if (!available) Debug.Log("Unavailable position!");
-            return available; //_tiles[z, x] == 0;
+            return available;
         }
 
         public void AddStructureToGrid(Structure s)
@@ -70,7 +70,19 @@ namespace Assets.Scripts
                     _tiles[s.StartingZ + i, s.StartingX + j] = s.GetStructureType();
                 }
             }
-//            PrintGrid();
+            GameData.AddStructure(s.gameObject);
+        }
+
+        public void RemoveStructureFromGrid(Structure s)
+        {
+            for (int i = 0; i < s.ZLength; i++)
+            {
+                for (int j = 0; j < s.XLength; j++)
+                {
+                    _tiles[s.StartingZ + i, s.StartingX + j] = 0;
+                }
+            }
+            GameData.RemoveStructure(s.gameObject);
         }
 
         private void PrintGrid()

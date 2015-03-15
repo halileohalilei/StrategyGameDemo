@@ -13,12 +13,10 @@ namespace Assets.Scripts
             return (int) StructureType.Unique;
         }
 
-        public override void OnClick()
+        public override void OpenPopUp()
         {
-            RectTransform popUpPanel = GameObject.Find("PopUpPanel").GetComponent<RectTransform>();
-            Transform popUpPosition = transform.GetChild(1);
-            Vector3 popUpPositionOnViewport = Camera.main.WorldToViewportPoint(popUpPosition.position);
-            popUpPanel.anchorMin = popUpPanel.anchorMax = popUpPositionOnViewport;
+            base.OpenPopUp();
+            Debug.Log("UniqueStructure");
         }
     }
 }
