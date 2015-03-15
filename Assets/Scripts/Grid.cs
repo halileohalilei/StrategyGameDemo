@@ -51,11 +51,13 @@ namespace Assets.Scripts
 
                     if (_tiles[i + z, j + x] != 0)
                     {
-                        return false;
+                        available = false;
+                        break;
                     }
                 }
             }
 
+            if (!available) Debug.Log("Unavailable position!");
             return available; //_tiles[z, x] == 0;
         }
 
