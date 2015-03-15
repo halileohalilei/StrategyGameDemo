@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -6,8 +7,15 @@ namespace Assets.Scripts
 
         public void RemoveStructure()
         {
-            Structure.CurrentlySelectedStructure.GetComponent<Structure>().DeleteStructure();
+            Structure s = Structure.CurrentlySelectedStructure.GetComponent<Structure>();
+            Type type = s.GetType();
+            s.DeleteStructure();
+            Util.UpdateStructureButtonTexts(type);
         }
 
+        public void PrintStructureInfo()
+        {
+            Structure.CurrentlySelectedStructure.GetComponent<Structure>().PrintStructureInfo();
+        }
     }
 }

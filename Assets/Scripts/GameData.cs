@@ -9,18 +9,41 @@ namespace Assets.Scripts
 {
     class GameData
     {
-        private static List<GameObject> _allPlacedStructures = new List<GameObject>();
+        private static List<Structure> _allPlacedStructures = new List<Structure>();
 
-        public static void AddStructure(GameObject structure)
+        public static int NumberOfUniqueStructuresLeft = 15;
+        public static int NumberOfCommonStructuresLeft = 5;
+
+        
+
+        public static void AddStructure(Structure structure)
         {
+            if (structure.GetType() == typeof(UniqueStructure))
+            {
+                NumberOfUniqueStructuresLeft--;
+            }
+            else if (structure.GetType() == typeof(CommonStructure))
+            {
+                NumberOfCommonStructuresLeft--;
+            }
+
             _allPlacedStructures.Add(structure);
             SavePlacedStructures();
         }
 
-        public static void RemoveStructure(GameObject structure)
+        public static void RemoveStructure(Structure structure)
         {
+            if (structure.GetType() == typeof(UniqueStructure))
+            {
+                NumberOfUniqueStructuresLeft++;
+            }
+            else if (structure.GetType() == typeof(CommonStructure))
+            {
+                NumberOfCommonStructuresLeft++;
+            }
+
             _allPlacedStructures.Remove(structure);
-            Object.Destroy(structure);
+            Object.Destroy(structure.gameObject);
             SavePlacedStructures();
         }
 

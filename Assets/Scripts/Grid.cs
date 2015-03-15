@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -70,7 +71,7 @@ namespace Assets.Scripts
                     _tiles[s.StartingZ + i, s.StartingX + j] = s.GetStructureType();
                 }
             }
-            GameData.AddStructure(s.gameObject);
+            GameData.AddStructure(s);
         }
 
         public void RemoveStructureFromGrid(Structure s)
@@ -82,7 +83,7 @@ namespace Assets.Scripts
                     _tiles[s.StartingZ + i, s.StartingX + j] = 0;
                 }
             }
-            GameData.RemoveStructure(s.gameObject);
+            GameData.RemoveStructure(s);
         }
 
         private void PrintGrid()
@@ -96,6 +97,18 @@ namespace Assets.Scripts
                 }
                 Debug.Log(s);
             }
+        }
+
+        public void LoadStructuresFromLastSession(List<Structure> structures)
+        {
+            for (int i = 0; i < structures.Count; i++)
+            {
+                Structure s = structures[i];
+                AddStructureToGrid(s);
+                s.transform.parent = transform;
+            }
+            Util.UpdateStructureButtonTexts(typeof(CommonStructure));
+            Util.UpdateStructureButtonTexts(typeof(UniqueStructure));
         }
     }
 }

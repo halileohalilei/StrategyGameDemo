@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -15,11 +16,13 @@ namespace Assets.Scripts
         public int ZLength;
         public int XLength;
 
-        private PopUpContainer _popUpContainer;
+        protected PopUpContainer _popUpContainer;
 
         public static GameObject CurrentlySelectedStructure;
 
-        void Awake()
+        public Color PopUpColor;
+
+        public virtual void Awake()
         {
             _popUpContainer = GameObject.Find("PopUpContainer").GetComponent<PopUpContainer>();
         }
@@ -39,6 +42,7 @@ namespace Assets.Scripts
             Transform popUpPosition = transform.GetChild(1);
             Vector3 popUpPositionOnViewport = Camera.main.WorldToViewportPoint(popUpPosition.position);
             popUpPanel.anchorMin = popUpPanel.anchorMax = popUpPositionOnViewport;
+            popUpPanel.GetComponent<Image>().color = PopUpColor;
 
             CurrentlySelectedStructure = gameObject;
         }
@@ -50,6 +54,11 @@ namespace Assets.Scripts
             RectTransform popUpPanel = _popUpContainer.PopUpPanel.GetComponent<RectTransform>();
             popUpPanel.gameObject.SetActive(false);
             CurrentlySelectedStructure = null;
+        }
+
+        public virtual void PrintStructureInfo()
+        {
+            Debug.Log("This is a structure.");
         }
     }
 }

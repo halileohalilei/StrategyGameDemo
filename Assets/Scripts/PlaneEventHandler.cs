@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -61,10 +62,17 @@ namespace Assets.Scripts
             PointerEventData pointerData = data as PointerEventData;
             if (pointerData != null && pointerData.pointerId == -1)
             {
-                if (!IsPlacingStructure()) return;
                 Vector3 structurePos = Util.WorldToGridPosition(_lastMouseOnWorldPosition, grid);
                 GameObject selectedStructure = allStructures[_selectedStructureIndex];
                 Structure prefabStructure = selectedStructure.GetComponent<Structure>();
+
+                if (prefabStructure.GetType() == typeof (UniqueStructure)
+                    && GameData.NumberOfUniqueStructuresLeft == 0)
+                    return;
+                if (prefabStructure.GetType() == typeof(CommonStructure)
+                    && GameData.NumberOfCommonStructuresLeft == 0)
+                    return;
+
                 if (grid.PositionOnGridAvailable(Convert.ToInt32(structurePos.z), 
                                                  Convert.ToInt32(structurePos.x), 
                                                  prefabStructure.ZLength, 
@@ -80,7 +88,7 @@ namespace Assets.Scripts
                         s.StartingX = Convert.ToInt32(structurePos.x);
                         s.StartingZ = Convert.ToInt32(structurePos.z);
                         grid.AddStructureToGrid(s);
-
+                        Util.UpdateStructureButtonTexts(s.GetType());
                     }
                 }
             }

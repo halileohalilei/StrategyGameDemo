@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -21,6 +22,20 @@ namespace Assets.Scripts
             float x = grid.StartingPoint.x + startingIndices.x + (structure.XLength*grid.TileXSize)/2;
 
             return new Vector3(x, 0.001f, z);
+        }
+
+        public static void UpdateStructureButtonTexts(Type structureType)
+        {
+            if (structureType == typeof(UniqueStructure))
+            {
+                Text t = GameObject.Find("UniqueStructureButtonText").GetComponent<Text>();
+                t.text = "Unique\nx" + GameData.NumberOfUniqueStructuresLeft;
+            }
+            else if (structureType == typeof(CommonStructure))
+            {
+                Text t = GameObject.Find("CommonStructureButtonText").GetComponent<Text>();
+                t.text = "Common\nx" + GameData.NumberOfCommonStructuresLeft;
+            }
         }
     }
 }
