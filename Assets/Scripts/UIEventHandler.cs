@@ -113,7 +113,6 @@ namespace Assets.Scripts
             {
                 _structureBeingDragged.SetActive(false);
             }
-            Debug.Log("Began Drag");
         }
     }
 }

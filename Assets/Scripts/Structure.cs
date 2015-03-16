@@ -13,27 +13,16 @@ namespace Assets.Scripts
             Common = 1,
             Unique
         }
-        [XmlAttribute("StartingZ")]
         public int StartingZ;
-        [XmlAttribute("StartingX")]
         public int StartingX;
-        [XmlAttribute("ZLength")]
         public int ZLength;
-        [XmlAttribute("XLength")]
         public int XLength;
 
-        [XmlIgnore]
         private PopUpContainer _popUpContainer;
 
-        [XmlIgnore]
         public static GameObject CurrentlySelectedStructure;
 
-        //        [XmlAttribute("PopUpColor")]
-        [XmlIgnore]
         public Color PopUpColor;
-
-        [XmlIgnore]
-        public StructureType sType;
 
         public virtual void Awake()
         {
@@ -45,13 +34,30 @@ namespace Assets.Scripts
             return 1;
         }
 
-        public virtual void OpenPopUp()
+        public void OpenPopUp()
         {
             RectTransform popUpPanel = _popUpContainer.PopUpPanel.GetComponent<RectTransform>();
-            if (!popUpPanel.gameObject.activeSelf)
+            if (CurrentlySelectedStructure != gameObject)
             {
-                popUpPanel.gameObject.SetActive(true);
+                ShowPopUp(popUpPanel);
             }
+            else
+            {
+                if (!popUpPanel.gameObject.activeSelf)
+                {
+                    ShowPopUp(popUpPanel);
+                }
+                else
+                {
+                    popUpPanel.gameObject.SetActive(false);
+                    CurrentlySelectedStructure = null;
+                }
+            }
+        }
+
+        private void ShowPopUp(RectTransform popUpPanel)
+        {
+            popUpPanel.gameObject.SetActive(true);
             Transform popUpPosition = transform.GetChild(1);
             Vector3 popUpPositionOnViewport = Camera.main.WorldToViewportPoint(popUpPosition.position);
             popUpPanel.anchorMin = popUpPanel.anchorMax = popUpPositionOnViewport;

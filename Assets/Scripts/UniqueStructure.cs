@@ -27,11 +27,5 @@ namespace Assets.Scripts
                                    ") Width: " + ZLength + " Height: " + XLength;
             Debug.Log(structureInfo);
         }
-
-        public override void OpenPopUp()
-        {
-            base.OpenPopUp();
-            Debug.Log("UniqueStructure");
-        }
     }
 }
