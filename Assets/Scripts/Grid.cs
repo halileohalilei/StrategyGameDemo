@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -28,6 +29,7 @@ namespace Assets.Scripts
             TileZSize = _zSize/ZLength;
 
             _tiles = new int[ZLength, XLength];
+            GameData.Awake();
         }
 
         public bool PositionOnGridAvailable(int z, int x, int zLength, int xLength)
@@ -101,11 +103,22 @@ namespace Assets.Scripts
 
         public void LoadStructuresFromLastSession(List<Structure> structures)
         {
+            GameObject[] prefabs = GetComponent<PlaneEventHandler>().allStructures;
             for (int i = 0; i < structures.Count; i++)
             {
                 Structure s = structures[i];
-                AddStructureToGrid(s);
-                s.transform.parent = transform;
+                Vector3 structurePos = new Vector3(s.StartingX, 0.01f, s.StartingZ);
+                GameObject selectedStructure = prefabs[s.GetStructureType() - 1];
+                GameObject newStructure = Instantiate(selectedStructure, structurePos, Quaternion.identity) as GameObject;
+                if (newStructure != null)
+                {
+                    newStructure.transform.position = Util.DetermineStructurePosition(this, structurePos, s);
+                    s = newStructure.GetComponent<Structure>();
+                    s.StartingX = Convert.ToInt32(structurePos.x);
+                    s.StartingZ = Convert.ToInt32(structurePos.z);
+                    AddStructureToGrid(s);
+                    s.transform.parent = transform;
+                }
             }
             Util.UpdateStructureButtonTexts(typeof(CommonStructure));
             Util.UpdateStructureButtonTexts(typeof(UniqueStructure));

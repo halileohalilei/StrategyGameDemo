@@ -1,26 +1,39 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Xml.Serialization;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
+    [Serializable]
     public class Structure : MonoBehaviour
     {
-        protected enum StructureType
+        public enum StructureType
         {
             Common = 1,
             Unique
         }
-
+        [XmlAttribute("StartingZ")]
         public int StartingZ;
+        [XmlAttribute("StartingX")]
         public int StartingX;
+        [XmlAttribute("ZLength")]
         public int ZLength;
+        [XmlAttribute("XLength")]
         public int XLength;
 
-        protected PopUpContainer _popUpContainer;
+        [XmlIgnore]
+        private PopUpContainer _popUpContainer;
 
+        [XmlIgnore]
         public static GameObject CurrentlySelectedStructure;
 
+        //        [XmlAttribute("PopUpColor")]
+        [XmlIgnore]
         public Color PopUpColor;
+
+        [XmlIgnore]
+        public StructureType sType;
 
         public virtual void Awake()
         {

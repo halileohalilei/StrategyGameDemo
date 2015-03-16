@@ -1,20 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Assets.Scripts
 {
-    class GameData
+    [XmlRoot("GameData")]
+    public class GameData
     {
-        private static List<Structure> _allPlacedStructures = new List<Structure>();
+        [XmlIgnore]
+        public List<Structure> _allPlacedStructures = new List<Structure>();
+        [XmlArray("Structures"), XmlArrayItem("Structure")]
+        public List<SerializableStructure> sList = new List<SerializableStructure>();
 
         public static int NumberOfUniqueStructuresLeft = 15;
         public static int NumberOfCommonStructuresLeft = 5;
 
-        
+        private static GameData instance;
+
+        static GameData()
+        {
+            instance = LoadPlacedStructures();
+            instance._allPlacedStructures = new List<Structure>();
+            List<Structure> tempStructureList = new List<Structure>();
+            foreach (SerializableStructure ss in instance.sList)
+            {
+                Structure s = ss.ToStructure();
+                tempStructureList.Add(s);
+            }
+            Grid grid = GameObject.Find("Plane").GetComponent<Grid>();
+            grid.LoadStructuresFromLastSession(tempStructureList);
+        }
+
+        public static void Awake()
+        {
+            
+        }
 
         public static void AddStructure(Structure structure)
         {
@@ -27,7 +50,7 @@ namespace Assets.Scripts
                 NumberOfCommonStructuresLeft--;
             }
 
-            _allPlacedStructures.Add(structure);
+            instance._allPlacedStructures.Add(structure);
             SavePlacedStructures();
         }
 
@@ -42,14 +65,36 @@ namespace Assets.Scripts
                 NumberOfCommonStructuresLeft++;
             }
 
-            _allPlacedStructures.Remove(structure);
+            instance._allPlacedStructures.Remove(structure);
             Object.Destroy(structure.gameObject);
             SavePlacedStructures();
         }
 
         private static void SavePlacedStructures()
         {
-            
+            instance.sList.Clear();
+            foreach (Structure s in instance._allPlacedStructures)
+            {
+                SerializableStructure ss = new SerializableStructure(s);
+                instance.sList.Add(ss);
+            }
+
+            var serializer = new XmlSerializer(typeof(GameData));
+            var stream = new FileStream("placedStructures.xml", FileMode.Create);
+            serializer.Serialize(stream, instance);
+            stream.Close();
+        }
+
+        private static GameData LoadPlacedStructures()
+        {
+            Debug.Log("Loading started");
+            var serializer = new XmlSerializer(typeof(GameData));
+            var stream = new FileStream("placedStructures.xml", FileMode.Open);
+            GameData data = serializer.Deserialize(stream) as GameData;
+            stream.Close();
+
+            Debug.Log("Loading done.");
+            return data;
         }
     }
 }
