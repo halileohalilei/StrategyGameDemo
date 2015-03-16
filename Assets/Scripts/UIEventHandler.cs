@@ -39,6 +39,8 @@ namespace Assets.Scripts
 
         public void DragStructure()
         {
+            if (_structureBeingDragged == null) return;
+
             Vector3 currentMousePosition = Input.mousePosition;
             if (Math.Abs(Vector3.Distance(_lastMousePosition, currentMousePosition)) > TOLERANCE)
             {
@@ -78,6 +80,8 @@ namespace Assets.Scripts
 
         public void EndDragStructure()
         {
+            if (_structureBeingDragged == null) return;
+
             if (!_structureBeingDragged.activeSelf)
             {
                 Destroy(_structureBeingDragged);
@@ -92,13 +96,15 @@ namespace Assets.Scripts
                 _grid.AddStructureToGrid(s);
                 Util.UpdateStructureButtonTexts(s.GetType());
             }
+            _structureBeingDragged = null;
         }
         public void BeginDragStructure(GameObject structurePrefab)
         {
-            if (structurePrefab.GetType() == typeof(UniqueStructure)
-                    && GameData.NumberOfUniqueStructuresLeft == 0)
+            Structure s = structurePrefab.GetComponent<Structure>();
+            if (s.GetType() == typeof(UniqueStructure)
+                && GameData.NumberOfUniqueStructuresLeft == 0)
                 return;
-            if (structurePrefab.GetType() == typeof(CommonStructure)
+            if (s.GetType() == typeof(CommonStructure)
                 && GameData.NumberOfCommonStructuresLeft == 0)
                 return;
 
