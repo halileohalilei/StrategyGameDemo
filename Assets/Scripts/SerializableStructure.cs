@@ -22,7 +22,7 @@ namespace Assets.Scripts
         [XmlAttribute("StructureType")] 
         public int StructureType;
 
-        private GameObject dummy = new GameObject();
+        private static GameObject dummy = new GameObject();
 
         public SerializableStructure(Structure s)
         {

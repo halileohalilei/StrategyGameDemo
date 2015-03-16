@@ -103,7 +103,7 @@ namespace Assets.Scripts
 
         public void LoadStructuresFromLastSession(List<Structure> structures)
         {
-            GameObject[] prefabs = GetComponent<PlaneEventHandler>().allStructures;
+            GameObject[] prefabs = GameObject.Find("Canvas").GetComponent<UIEventHandler>().AllStructures;
             for (int i = 0; i < structures.Count; i++)
             {
                 Structure s = structures[i];
