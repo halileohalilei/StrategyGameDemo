@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -89,12 +90,24 @@ namespace Assets.Scripts
         {
             Debug.Log("Loading started");
             var serializer = new XmlSerializer(typeof(GameData));
-            var stream = new FileStream("placedStructures.xml", FileMode.Open);
-            GameData data = serializer.Deserialize(stream) as GameData;
-            stream.Close();
+            FileStream stream;
+            try
+            {
+                stream = new FileStream("placedStructures.xml", FileMode.Open);
+                GameData data = serializer.Deserialize(stream) as GameData;
+                stream.Close();
 
-            Debug.Log("Loading done.");
-            return data;
+                Debug.Log("Loading done.");
+                return data;
+            }
+            catch (FileNotFoundException)
+            {
+                return new GameData();
+            }
+            catch (XmlException)
+            {
+                return new GameData();
+            }
         }
     }
 }
